@@ -6,9 +6,7 @@ public class Recipient extends Person{
 	private Integer finalDonorID;
 
 	public Recipient(Integer id, String[] details) {
-		setID(id);
-		setName(details[0]);
-		setBloodGroup(details[1]);
+		super(id,details[0],details[1]);
 	}
 	
 	

@@ -1,33 +1,31 @@
 
-public class Person {
+public abstract class Person {
 
 	private String name;
-	private String bloodGroup;
+	private String blood;
 	private int ID;
+	
+	
+	public Person(int id , String name , String blood){
+		ID=id;
+		this.name=name;
+		this.blood=blood;
+	}
 	
 	public String getName() {
 		return this.name;
 	}
-	
-	public void setName(String name) {
-		this.name=name;
-	}
+
 	
 	public String getBlood() {
-		return this.bloodGroup;
+		return this.blood;
 	}
-	
-	public void setBloodGroup(String group) {
-		bloodGroup=group;
-	}
+
 	
 	public int getID() {
 		return this.ID;
 	}
-	
-	public void setID(int id) {
-		this.ID=id;
-	}
+
 	
 
 

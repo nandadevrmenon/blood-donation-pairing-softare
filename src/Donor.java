@@ -5,16 +5,14 @@ import java.util.HashMap;
 public class Donor extends Person{
 	
 	protected static HashMap<Integer,Integer> matchesPerID = new HashMap<Integer,Integer>(); 		//key: Donor ID  value: total number of compatible recipients
-	protected static HashMap<Integer,Integer> hitsPerID = new HashMap<Integer,Integer>();			//Key: Donor ID  value: total 
+	protected static HashMap<Integer,Integer> hitsPerID = new HashMap<Integer,Integer>();			//Key: Donor ID  value: total number of actuals pairings for that donor
 	
-	private ArrayList<LocalDate> appointments = new ArrayList<LocalDate>();
+	private ArrayList<LocalDate> appointments = new ArrayList<LocalDate>();		//list of appointments this donor has
 	
-	private ArrayList<Integer> hitRecipientIDs= new ArrayList<Integer>();
+	private ArrayList<Integer> hitRecipientIDs= new ArrayList<Integer>();		//the IDs of the recipients that this donor has been paired with
 	
 	public Donor(Integer id, String[] details) {
-		setID(id);
-		setName(details[0]);
-		setBloodGroup(details[1]);
+		super(id,details[0],details[1]);
 		hitsPerID.put(id, 0);
 	}
 		

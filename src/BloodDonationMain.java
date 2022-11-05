@@ -1,6 +1,10 @@
 import java.awt.event.ActionEvent;
+import javax.swing.JOptionPane;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -21,7 +25,8 @@ public class BloodDonationMain implements ActionListener{
 	JButton addDonorButton;
 	JButton addRecipButton;
 	JButton runAlgButton;
-	String donorFilePath;
+	File donorFile;
+	File recipFile;
 	
 	private BloodDonationMain() {
 		
@@ -30,8 +35,9 @@ public class BloodDonationMain implements ActionListener{
 		JPanel upperPanel = new JPanel();
 		JPanel lowerPanel = new JPanel();
 
-		upperPanel.setBounds(0,50,400,400);
-		lowerPanel.setBounds(0,100,400,400);
+		upperPanel.setBounds(0,0,300,200);
+		upperPanel.setBackground(new Color(10,10,10));
+		lowerPanel.setBounds(0,200,300,200);
 		
 		
 		addDonorButton = new JButton("Add Donor file");
@@ -46,8 +52,7 @@ public class BloodDonationMain implements ActionListener{
 		
 		runAlgButton = new JButton("Run Pairing Algorithm");
 		runAlgButton.addActionListener(this);
-
-////		JLabel label = new JLabel("Welcome to Blood Donation Assistant!");
+		lowerPanel.add(runAlgButton);
 
 
   
@@ -55,8 +60,9 @@ public class BloodDonationMain implements ActionListener{
 		frame.setTitle("Blood Donation Assistant");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(upperPanel);  
+        frame.add(lowerPanel);
         frame.setResizable(false);
-        frame.setSize(400,400);    
+        frame.setSize(300,300);    
         frame.setLayout(null);    
      	frame.setVisible(true);    
 	}
@@ -70,8 +76,8 @@ public class BloodDonationMain implements ActionListener{
 			int response = donorFileChooser.showOpenDialog(null);	
 			
 			if(response == donorFileChooser.APPROVE_OPTION) {
-				donorFilePath = donorFileChooser.getSelectedFile().getAbsolutePath();
-				System.out.println(donorFilePath);
+				donorFile = donorFileChooser.getSelectedFile();
+				System.out.println(donorFile.getAbsolutePath());
 			}
 		}
 		if(e.getSource()==addRecipButton) {
@@ -81,19 +87,64 @@ public class BloodDonationMain implements ActionListener{
 			int response = recipFileChooser.showOpenDialog(null);	
 			
 			if(response == recipFileChooser.APPROVE_OPTION) {
-				donorFilePath = recipFileChooser.getSelectedFile().getAbsolutePath();
-				System.out.println(donorFilePath);
+				recipFile = recipFileChooser.getSelectedFile();
+				System.out.println(recipFile.getAbsolutePath());
 			}
 		}
 		if(e.getSource()==runAlgButton) {
-			try {
-				PairingAlgorithm PA = new PairingAlgorithm();
-			} catch (IOException e1) {
-				e1.printStackTrace();
+			
+			
+			if(donorFile!=null && recipFile!=null){
+				if(!checkFileValidity(donorFile)){
+					showError("The Donor File Selected is not in the .txt Format","Invalid Donor File");
+				}
+				else if(!checkFileValidity(recipFile)){
+					showError("The Recipient File Selected is not in the .txt Format","Invalid Recipient File");
+				}
+				else{
+					try{
+						PairingAlgorithm PA = new PairingAlgorithm(donorFile,recipFile);
+					}
+					catch(IOException ioe) {
+						showError(ioe.getStackTrace().toString(),"IOException");
+					} 
+					catch (URISyntaxException e1) {
+						showError(e1.getStackTrace().toString(),"URIException");
+					}
+				}
+			
 			}
+			else {
+				showError("You have not selected either donor or recipient files.","Null File Error");
+			}
+			
 		}
 		
 	}
 	
+	private boolean checkFileValidity(File file) {
+		if(!file.exists()) return false;
+		if(!getExtension(file).equals("txt")) return false;
+		return true;
+	}
+	
+	
+	
+	private String getExtension(File file){
+		String path= file.getAbsolutePath();
+		String extension = "";
+
+		int i = path.lastIndexOf('.');
+		if (i >= 0) {
+		    extension = path.substring(i+1);
+		}
+		return extension;
+	}
+	
+	public static void showError(String message,String title) {
+		JOptionPane.showMessageDialog(null,message,title,0);
+
+	}
+
 	
 }

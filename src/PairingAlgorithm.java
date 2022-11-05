@@ -2,6 +2,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URISyntaxException;
+import java.security.CodeSource;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -29,16 +31,13 @@ public class PairingAlgorithm {
 	public static LinkedHashMap<Integer,Recipient> recipients = new LinkedHashMap<Integer,Recipient>();
 
 
-	public PairingAlgorithm() throws IOException {
+	public PairingAlgorithm(File donors, File recipients) throws IOException, URISyntaxException {
 	
 		
 		
-		File donorsFile = new File("donors.txt");
-		File recipientsFile = new File("recipients.txt");
+		File donorsFile = donors;
+		File recipientsFile = recipients;
 	
-		if(!(donorsFile.exists() && recipientsFile.exists())) {
-			throw new FileNotFoundException("Donor/Recipient File Not Found or Already opened by another application");
-		}
 		
 		try {
 			fillPatientMaps(donorsFile,recipientsFile);			//extracts info from files and makes donor and recipient objects and fills patient hashmaps
@@ -57,7 +56,10 @@ public class PairingAlgorithm {
 		printMatches();
 		Donor.printHits();
 		
-		File appFile = new File("appointments.txt");
+		CodeSource codeSource = BloodDonationMain.class.getProtectionDomain().getCodeSource();
+		File jarFile = new File(codeSource.getLocation().toURI().getPath());
+		String jarDir = jarFile.getParentFile().getPath();
+		File appFile = new File(jarDir+"/appointments.txt");
 		appFile.createNewFile();
 		
 		arrangeDonorsMap();
